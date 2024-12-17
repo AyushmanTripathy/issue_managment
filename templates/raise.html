@@ -1,0 +1,63 @@
+{% extends 'base.html' %} {% block style %}
+
+<style>
+  form {
+    display: flex;
+    flex-direction: column;
+    min-width: 600px;
+    gap: 20px;
+  }
+  .selected {
+  }
+  .faculty {
+    cursor: pointer;
+  }
+</style>
+
+{% endblock %} {% block body %}
+
+<a href="/"> Back to Dashboard </a>
+<h2 id="heading">Select the faculty to address</h2>
+<section>
+  {% for id, name in faculties %}
+  <p class="faculty" onclick="selectFaculty(this, {{ id }})">{{ name }}</p>
+  {% endfor %}
+</section>
+
+<form action="/raise" method="POST">
+  <input type="hidden" name="fid" />
+  <label for="title"> Title </label>
+  <input required type="text" name="title" placeholder="Title to summarise the issue" />
+  <label for="body"> Description </label>
+  <textarea
+      required
+    id="body"
+    name="body"
+    cols="30"
+    rows="10"
+    placeholder="Description of the issue"
+  ></textarea>
+  <button>Submit</button>
+</form>
+<script>
+  const heading = document.getElementById("heading");
+  const form = document.querySelector("form");
+  const section = document.querySelector("section");
+
+  form.style.display = "none";
+
+  function selectFaculty(ele, id) {
+    section.querySelectorAll("p").forEach((x) => {
+      if (x != ele) x.style.display = "none";
+    });
+
+    ele.classList.add("selected");
+    ele.innerText = "To " + ele.innerText;
+    heading.innerText = "Describe the issue";
+    document.querySelector("input[name='fid']").value = id;
+    form.style.display = "flex";
+    ele.onclick = () => {};
+  }
+</script>
+
+{% endblock %}

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='global.css')}}"
+    />
+    <title>Sign Up</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: var(--pri);
+        color: var(--light);
+      }
+      section {
+        width: 95vw;
+        max-width: 600px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        background: var(--sec);
+        padding: 20px;
+        border-radius: 10px;
+      }
+      h1 {
+        text-align: center;
+      }
+      img {
+        height: 50px;
+        width: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <section>
+      <h1>Sign In</h1>
+      <p id="message">{{ message }}</p>
+      <label for="name"> Name </label>
+      <input id="name" type="text" placeholder="Your name" />
+      <label> Password </label>
+      <input type="password" placeholder="Your password" />
+      <input type="password" placeholder="Confirm password" />
+      <label> Email </label>
+      <input pattern=".+@giet\.edu" type="email" placeholder="mail@giet.edu" />
+      <img
+        id="loading"
+        src="{{ url_for('static', filename='loading.gif') }}"
+        alt=""
+      />
+      <input id="otp" type="number" placeholder="Your OTP" />
+      <button id="submit">Get OTP</button>
+      <a href="/login"> Already signed up? log in here</a>
+    </section>
+
+    <script>
+      const passwords = document.querySelectorAll("input[type='password']");
+      const name = document.getElementById("name");
+      const otp = document.getElementById("otp");
+      const email = document.querySelector("input[type='email']");
+      const msg = document.getElementById("message");
+      const loading = document.getElementById("loading");
+      const submit = document.getElementById("submit");
+
+      loading.style.display = "none";
+      otp.style.display = "none";
+      let token = null;
+
+      submit.onclick = async () => {
+        submit.style.display = "none";
+        loading.style.display = "block";
+
+        if (token) await signin();
+        else await get_otp();
+
+        loading.style.display = "none";
+        submit.style.display = "block";
+      };
+
+      async function signin() {
+        if (!Boolean(name.value.trim()))
+          return (msg.innerText = "Name is required");
+        if (!Boolean(Number(otp.value)))
+          return (msg.innerText = "OTP is required");
+        if (!Boolean(passwords[0].value.trim()))
+          return (msg.innerText = "Password is required");
+        if (passwords[0].value != passwords[1].value)
+          return (msg.innerText = "Passwords didnot match");
+        if (passwords[0].value.length < 8)
+          return (msg.innerText = "Password must have minimum 8 characters");
+        if (!email.validity.valid)
+          return (msg.innerText = "valid @giet.edu email is required");
+
+        let res = await fetch("/signup", {
+          method: "POST",
+          body: JSON.stringify({
+            name: name.value,
+            email: email.value,
+            password: passwords[0].value,
+            otp: Number(otp.value),
+            token,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (res.ok) return (window.location.href = "/");
+        msg.innerText = await res.text();
+        submit.innerText = "Retry";
+        submit.onclick = () => window.location.reload();
+      }
+
+      async function get_otp() {
+        if (!Boolean(email.value.trim()))
+          return (msg.innerText = "Email is required");
+        if (!email.validity.valid)
+          return (msg.innerText = "valid @giet.edu email is required");
+
+        let res = await fetch("/get_otp", {
+          method: "POST",
+          body: JSON.stringify({
+            email: email.value,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!res.ok) return;
+        res = await res.json();
+        token = res.token;
+
+        msg.innerText = "OTP has been sent to your mail";
+        submit.innerText = "Sign Up";
+        otp.style.display = "block";
+        return res;
+      }
+    </script>
+  </body>
+</html>

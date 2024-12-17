@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title> Login </title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='global.css')}}">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: var(--pri);
+      color: var(--light);
+    }
+    form {
+      width: 95vw;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      background: var(--sec);
+      padding: 20px;
+      border-radius: 10px;
+    }
+    h1 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <form action="/login" method="POST">
+    <h1> Login </h1>
+    <p> {{ message }} </p>
+    <label for="email"> Email </label>
+    <input type="email" name="email" placeholder="mail@giet.edu">
+    <label for="password"> Password </label>
+    <input type="password" name="password">
+    <button> Log in </button>
+
+    <a href="/signup"> Not signed in yet? </a>
+  </form>
+</body>
+</html>

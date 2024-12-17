@@ -1,0 +1,81 @@
+{% extends 'base.html' %} {% block style %}
+
+<style>
+  .container {
+    width: 600px;
+  }
+</style>
+
+{% endblock %} {% block body %}
+
+<h1>Issues to Address</h1>
+
+{% if ongoing|length %}
+
+<section class="container">
+  {% for complain in ongoing %}
+
+  <div class="issue">
+    <p>
+      <strong> {{ complain[2] }}</strong>
+      <span class="status {{ complain[4] }}"> {{ complain[4] }} </span>
+      <br />
+      <br />
+      from {{ complain[1] }}
+    </p>
+    <p class="show_desc" onclick="this.innerText = `{{complain[3]}}`">
+      Show Description
+    </p>
+
+    {% if complain[4] == "Unread" %}
+    <button onclick="update('Underway', {{ complain[0] }})">Address</button>
+    {% else %}
+    <button onclick="update('Resolved', {{ complain[0] }})">Resolve</button>
+    {% endif %}
+    <button onclick="update('Rejected', {{ complain[0] }})">Reject</button>
+  </div>
+
+  {% endfor %}
+</section>
+
+{% else %}
+
+<p>No issuses raised for you</p>
+
+{% endif %} {% if done|length %}
+<h1>Issues Addressed</h1>
+<section class="container">
+  {% for complain in done %}
+
+  <div class="issue">
+    <p>
+      <strong> {{ complain[2] }}</strong>
+      <span class="status {{ complain[4] }}"> {{ complain[4] }} </span>
+      <br />
+      <br />
+      from {{ complain[1] }}
+    </p>
+    <p class="show_desc" onclick="this.innerText = `{{complain[3]}}`">
+      Show Description
+    </p>
+  </div>
+
+  {% endfor %}
+</section>
+
+{% endif %}
+
+<script>
+  async function update(stat, cid) {
+    let res = await fetch("/status", {
+      method: "PATCH",
+      body: JSON.stringify({ status: stat, cid }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    window.location.reload();
+  }
+</script>
+
+{% endblock %}

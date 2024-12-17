@@ -1,0 +1,38 @@
+{% extends 'base.html' %} {% block style %}
+
+<style>
+  .container {
+    width: 600px;
+  }
+</style>
+
+{% endblock %} {% block body %}
+
+<a href="/raise"> Raise Issue </a>
+
+<h1>Your Issuses</h1>
+
+{% if complaints|length %}
+<section class="container">
+  {% for complain in complaints %}
+
+  <div class="issue">
+    <p>
+      <strong> {{ complain[2] }}</strong>
+      <span class="status {{ complain[4] }}"> {{ complain[4] }} </span>
+      <br />
+      <br />
+      to {{ complain[1] }}
+    </p>
+    <p class="show_desc" onclick="this.innerText = `{{complain[3]}}`">
+      Show Description
+    </p>
+  </div>
+
+  {% endfor %}
+</section>
+{% else %}
+
+<p>You have raised no issuses yet</p>
+
+{% endif %} {% endblock %}

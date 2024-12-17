@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Grievance Addressing System</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='global.css')}}"
+    />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: var(--pri);
+        color: var(--light);
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 95vw;
+      }
+      a {
+        background: var(--hl);
+        color: var(--light);
+        width: 200px;
+        text-align: center;
+        padding: 10px;
+        border-radius: 10px;
+      }
+    </style>
+    {% block style %} {% endblock %}
+  </head>
+  <body>
+    <header>
+      <h2>{{ session["name"] }}</h2>
+      <a href="/logout"> Logout </a>
+    </header>
+    {% block body %} {% endblock %}
+  </body>
+</html>
